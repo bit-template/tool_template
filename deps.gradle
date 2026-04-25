@@ -1,7 +1,7 @@
-ext.org = "bit-faas"   // your GitHub org
+ext.org = "bit-toolnest"   // your GitHub org
 
 ext.deps = [
-    "toolA",
+    "toolA",    // repo name for each tool
     "toolB",
     "toolC"
 ]

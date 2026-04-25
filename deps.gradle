@@ -1,5 +1,6 @@
 ext.org = "bit-faas"   // your GitHub org
 
+//use real tool repo instead of toolA, toolB, toolC
 ext.deps = [
     [repo: "toolA", version: "v1.2.0"],   // fixed tag
     [repo: "toolB", version: "main"],     // fixed branch

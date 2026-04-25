@@ -1,0 +1,7 @@
+ext.org = "bit-faas"   // your GitHub org
+
+ext.deps = [
+    "toolA",
+    "toolB",
+    "toolC"
+]

@@ -1,19 +1,31 @@
 apply from: 'deps.gradle'
 
-task install {
-    doFirst {
+// Task to fetch and install dependencies
+task installDeps {
+    doLast {
         deps.each { dep ->
-            def depPath = "${buildDir}/deps/${dep.repo}"
+            def depPath = "${buildDir}/deps/${dep}"
             if (!file(depPath).exists()) {
-                println "Cloning dependency repo: ${dep.repo} from org ${org}"
+                println "Cloning dependency repo: ${dep} from org ${org}"
                 exec {
-                    commandLine "git", "clone", "https://github.com/${org}/${dep.repo}.git", depPath
+                    commandLine "git", "clone", "https://github.com/${org}/${dep}.git", depPath
+                }
+            } else {
+                println "Updating dependency repo: ${dep}"
+                exec {
+                    workingDir depPath
+                    commandLine "git", "pull"
                 }
             }
-            println "Installing dependency: ${dep.repo}"
+
+            println "Installing dependency: ${dep}"
             gradle.includedBuild(depPath).task(":install").execute()
         }
     }
+}
+
+// Main install task depends on installDeps
+task install(dependsOn: installDeps) {
     doLast {
         println "Installing current tool..."
         exec {

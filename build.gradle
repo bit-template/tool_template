@@ -1,30 +1,47 @@
 apply from: 'deps.gradle'
 
-// Task to fetch and install dependencies
 task installDeps {
     doLast {
         deps.each { dep ->
-            def depPath = "${buildDir}/deps/${dep}"
+            def depPath = "${buildDir}/deps/${dep.repo}"
             if (!file(depPath).exists()) {
-                println "Cloning dependency repo: ${dep} from org ${org}"
+                println "Cloning dependency repo: ${dep.repo} from org ${org}"
                 exec {
-                    commandLine "git", "clone", "https://github.com/${org}/${dep}.git", depPath
+                    commandLine "git", "clone", "https://github.com/${org}/${dep.repo}.git", depPath
                 }
             } else {
-                println "Updating dependency repo: ${dep}"
+                println "Updating dependency repo: ${dep.repo}"
                 exec {
                     workingDir depPath
                     commandLine "git", "pull"
                 }
             }
 
-            println "Installing dependency: ${dep}"
+            // Handle version logic
+            if (dep.version == "latest") {
+                println "Fetching latest commit for ${dep.repo}"
+                exec {
+                    workingDir depPath
+                    commandLine "git", "checkout", "main"   // assumes main is default branch
+                }
+                exec {
+                    workingDir depPath
+                    commandLine "git", "pull"
+                }
+            } else {
+                println "Checking out version ${dep.version} for ${dep.repo}"
+                exec {
+                    workingDir depPath
+                    commandLine "git", "checkout", dep.version
+                }
+            }
+
+            println "Installing dependency: ${dep.repo}"
             gradle.includedBuild(depPath).task(":install").execute()
         }
     }
 }
 
-// Main install task depends on installDeps
 task install(dependsOn: installDeps) {
     doLast {
         println "Installing current tool..."

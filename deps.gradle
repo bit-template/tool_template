@@ -1,7 +1,7 @@
-ext.org = "bit-toolnest"   // your GitHub org
+ext.org = "bit-faas"   // your GitHub org
 
 ext.deps = [
-    "toolA",    // repo name for each tool
-    "toolB",
-    "toolC"
+    [repo: "toolA", version: "v1.2.0"],   // fixed tag
+    [repo: "toolB", version: "main"],     // fixed branch
+    [repo: "toolC", version: "latest"]    // always fetch most recent
 ]
